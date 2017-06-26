@@ -57,11 +57,14 @@ public class GameManager : MonoBehaviour {
         ShowManual();
 	}
 
-    //ONLY FOR EXIT
+    //EXIT
     void Update()
     {
         if (Input.GetKey("escape"))
             Application.Quit();
+        
+        if (Input.GetKey(KeyCode.R))
+            Invoke("Reset", resetDelay);
     }
 
     void ShowManual()
@@ -79,20 +82,23 @@ public class GameManager : MonoBehaviour {
     {
         //clone the object and return the clone
         ResetPlayer();
-        Instantiate(destructibleBlocksPrefab, transform.position, Quaternion.identity);
-        //Instantiate(destructibleBlocksPrefab);
+        Instantiate(destructibleBlocksPrefab, 
+            transform.position, 
+            Quaternion.identity);
     }
 	
     void Reset() 
     {
         Time.timeScale = 1f;
-        //Application.LoadLevel(Application.loadedLevel);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, 
+            LoadSceneMode.Single);
     }
 
     void ResetPlayer() 
     {
-        clonePlayer = Instantiate(player, player.transform.position, Quaternion.identity) as GameObject;
+        clonePlayer = Instantiate(player, 
+            player.transform.position, 
+            Quaternion.identity) as GameObject;
     }
 
     //void IsGameOver()
@@ -101,7 +107,9 @@ public class GameManager : MonoBehaviour {
         if (bricksCount < 1) 
         {
             youWon.SetActive(true);
-            Instantiate(playerWinParticles, transform.position, Quaternion.identity);
+            Instantiate(playerWinParticles, 
+                transform.position, 
+                Quaternion.identity);
 
             AudioManager.instance.WinSound();
 
@@ -118,11 +126,11 @@ public class GameManager : MonoBehaviour {
             EndGame = true;
 
             Time.timeScale = 0.5f; //use for slow motion
-            Invoke("Reset", resetDelay); //invoke method with delay
+            Invoke("Reset", resetDelay); 
         }
     }   
 
-    public void LoseLife() //in Floor
+    public void LoseLife() //to call from Floor
     {
         if (!EndGame) 
         {
@@ -130,8 +138,12 @@ public class GameManager : MonoBehaviour {
             lifeCountText.text = "" + lifeCount;
             scoreCount = 0;
             scoreCountText.text = "" + scoreCount;
-            Instantiate(playerDestroyParticles, clonePlayer.transform.position, Quaternion.identity); //don't needed as GameObject
+            Instantiate(playerDestroyParticles, 
+                clonePlayer.transform.position, 
+                Quaternion.identity); 
+            
             AudioManager.instance.LoseSound();
+
             Destroy(GameObject.Find(ballTypeName)); //___kluge?___
             Destroy(clonePlayer);
             Invoke("ResetPlayer", resetDelay);
