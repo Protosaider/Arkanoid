@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
 
     private string ballTypeName = "Ball"; //___for find___
 
+    private bool endGame = false;
+
     public Text lifeCountText;
     public Text scoreCountText;
 
@@ -22,6 +24,7 @@ public class GameManager : MonoBehaviour {
 
     public GameObject destructibleBlocksPrefab;
     public GameObject playerDestroyParticles;
+    public GameObject playerWinParticles;
 
     public GameObject player;
 
@@ -89,15 +92,17 @@ public class GameManager : MonoBehaviour {
     //void IsGameOver()
     void CheckGameOver()
     {
-        if (bricksCount < 1) 
+        if (bricksCount < 1 && !endGame) 
         {
+            endGame = true;
             youWon.SetActive(true);
+            Instantiate(playerWinParticles, transform.position, Quaternion.identity);
             WinSound();
             Time.timeScale = 0.5f; //use for slow motion
             Invoke("Reset", resetDelay); //invoke method with delay
         }
 
-        if (lifeCount < 1)
+        if (lifeCount < 1 && !endGame)
         {
             youLose.SetActive(true);
             Time.timeScale = 0.5f; //use for slow motion
