@@ -29,6 +29,10 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null; //for Singletone
 
+    public AudioClip brickSound;
+    public AudioClip winSound;
+    private AudioSource source;
+
 	// Use this for initialization
 	void Start() 
     {
@@ -41,6 +45,7 @@ public class GameManager : MonoBehaviour {
         }
         Setup();
         ShowManual();
+        source = GetComponent<AudioSource>();
 	}
 
     //ONLY FOR EXIT
@@ -87,14 +92,15 @@ public class GameManager : MonoBehaviour {
         if (bricksCount < 1) 
         {
             youWon.SetActive(true);
-            Time.timeScale = 0.25f; //use for slow motion
+            WinSound();
+            Time.timeScale = 0.5f; //use for slow motion
             Invoke("Reset", resetDelay); //invoke method with delay
         }
 
         if (lifeCount < 1)
         {
             youLose.SetActive(true);
-            Time.timeScale = 0.25f; //use for slow motion
+            Time.timeScale = 0.5f; //use for slow motion
             Invoke("Reset", resetDelay); //invoke method with delay
         }
     }   
@@ -118,5 +124,16 @@ public class GameManager : MonoBehaviour {
         scoreCount++;
         scoreCountText.text = "" + scoreCount;
         CheckGameOver();
+        DestroyBrickSound();
+    }
+
+    void DestroyBrickSound()
+    {
+        source.PlayOneShot(brickSound, 0.9f);
+    }
+
+    void WinSound()
+    {
+        source.PlayOneShot(winSound, 1.0f);
     }
 }

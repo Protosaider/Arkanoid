@@ -6,11 +6,18 @@ public class PlayerController : MonoBehaviour {
     //private Rigidbody rb;
     public float playerSpeed;
     //public Vector3 startPosition;
+    public AudioClip hitSound;
+    private AudioSource source;
 	// Use this for initialization
 	void Start() 
     {
         //rb = GetComponent<Rigidbody>();
 	}
+
+    void Awake()
+    {
+        source = GetComponent<AudioSource>();
+    }
 	
     void FixedUpdate()
     {
@@ -25,5 +32,10 @@ public class PlayerController : MonoBehaviour {
         {
             transform.position = startPosition;
         }*/
+    }
+
+    void OnCollisionEnter()
+    {
+        source.PlayOneShot(hitSound, 1.0f);
     }
 }
