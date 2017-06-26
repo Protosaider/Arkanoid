@@ -15,6 +15,16 @@ public class GameManager : MonoBehaviour {
 
     private bool endGame = false;
 
+    public bool EndGame {
+        get {
+            return endGame;
+        }
+
+        private set {
+            endGame = value;
+        }
+    }
+
     public Text lifeCountText;
     public Text scoreCountText;
 
@@ -32,9 +42,6 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance = null; //for Singletone
 
-    public AudioClip brickSound;
-    public AudioClip winSound;
-    private AudioSource source;
 
 	// Use this for initialization
 	void Start() 
@@ -48,7 +55,6 @@ public class GameManager : MonoBehaviour {
         }
         Setup();
         ShowManual();
-        source = GetComponent<AudioSource>();
 	}
 
     //ONLY FOR EXIT
@@ -92,19 +98,25 @@ public class GameManager : MonoBehaviour {
     //void IsGameOver()
     void CheckGameOver()
     {
-        if (bricksCount < 1 && !endGame) 
+        if (bricksCount < 1) 
         {
-            endGame = true;
             youWon.SetActive(true);
             Instantiate(playerWinParticles, transform.position, Quaternion.identity);
-            WinSound();
+
+            AudioManager.instance.WinSound();
+
+            EndGame = true;
+
             Time.timeScale = 0.5f; //use for slow motion
             Invoke("Reset", resetDelay); //invoke method with delay
         }
 
-        if (lifeCount < 1 && !endGame)
+        if (lifeCount < 1)
         {
             youLose.SetActive(true);
+
+            EndGame = true;
+
             Time.timeScale = 0.5f; //use for slow motion
             Invoke("Reset", resetDelay); //invoke method with delay
         }
@@ -112,15 +124,19 @@ public class GameManager : MonoBehaviour {
 
     public void LoseLife() //in Floor
     {
-        lifeCount--;
-        lifeCountText.text = "" + lifeCount;
-        scoreCount = 0;
-        scoreCountText.text = "" + scoreCount;
-        Instantiate(playerDestroyParticles, clonePlayer.transform.position, Quaternion.identity); //don't needed as GameObject
-        Destroy(GameObject.Find(ballTypeName)); //___kluge?___
-        Destroy(clonePlayer);
-        Invoke("ResetPlayer", resetDelay);
-        CheckGameOver();
+        if (!EndGame) 
+        {
+            lifeCount--;
+            lifeCountText.text = "" + lifeCount;
+            scoreCount = 0;
+            scoreCountText.text = "" + scoreCount;
+            Instantiate(playerDestroyParticles, clonePlayer.transform.position, Quaternion.identity); //don't needed as GameObject
+            AudioManager.instance.LoseSound();
+            Destroy(GameObject.Find(ballTypeName)); //___kluge?___
+            Destroy(clonePlayer);
+            Invoke("ResetPlayer", resetDelay);
+            CheckGameOver();
+        }
     }
 
     public void DestroyBrick() //to call from brick.cs
@@ -129,16 +145,5 @@ public class GameManager : MonoBehaviour {
         scoreCount++;
         scoreCountText.text = "" + scoreCount;
         CheckGameOver();
-        DestroyBrickSound();
-    }
-
-    void DestroyBrickSound()
-    {
-        source.PlayOneShot(brickSound, 0.9f);
-    }
-
-    void WinSound()
-    {
-        source.PlayOneShot(winSound, 1.0f);
     }
 }

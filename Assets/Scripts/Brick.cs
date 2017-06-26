@@ -10,6 +10,7 @@ public class Brick : MonoBehaviour {
     {
         Instantiate(destroyParticles, transform.position, Quaternion.identity);
         GameManager.instance.DestroyBrick();
+        AudioManager.instance.DestroyBrickSound();
         Destroy(gameObject);
     }
 }

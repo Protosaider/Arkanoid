@@ -8,15 +8,11 @@ public class Ball : MonoBehaviour {
     private Rigidbody rb;
     //private Vector3 push;
 
-    public AudioClip launchSound;
-    private AudioSource source;
-
     private bool ballInGame = false;
 	
 	void Awake() 
     {
         rb = GetComponent<Rigidbody>();
-        source = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -35,7 +31,7 @@ public class Ball : MonoBehaviour {
             Vector3 push = new Vector3(x, 0, 1.0f - Mathf.Abs(x)) * initialVelocity;
             rb.AddForce(push);        
             //rb.velocity = Vector3.left;
-            source.PlayOneShot(launchSound, 1.0f);
+            AudioManager.instance.LaunchBallSound();
         } 
         /*else 
             if (Input.GetButtonDown("Jump") && ballInGame == true)
